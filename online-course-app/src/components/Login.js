@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Alert, AlertDescription } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
+import authApi from '../services/authApi';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -14,13 +17,15 @@ const Login = () => {
         password: ''
     });
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
-        //Clear errros when user types
+        //Clear errors when user types
         setErrors(prev => ({
             ...prev,
             [name]: ''
@@ -59,34 +64,31 @@ const Login = () => {
             return;
         }
 
+        setIsLoading(true);
+
         try {
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            const data = await response.json();
-
-            if (response.ok){
+            const response = await authApi.login(formData); 
+                
+            if (response.success){
                 //Handles successful logins
                 navigate('/dashboard');
             }
             else {
                 setErrors({
-                    username: data.message || 'Login failed',
+                    username: response.message || 'Login failed',
                     password: ''
                 });
             }
         }
         catch(error){
             setErrors({
-                username: 'An error occurred. Please try again',
+                username: error.message || 'An error occurred. Please try again',
                 password: ''
             });
-        }   
+        } 
+        finally{
+            setIsLoading(false);
+        }  
     };
 
     return (
@@ -148,9 +150,18 @@ const Login = () => {
 
                         <button
                         type='submit'
+                        disabled={isLoading}
                         className='w-full felx justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                         >
-                            Log In
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className='mr-2 h-4 w-4 animate-spin'/>
+                                    Loggin In
+                                </>
+                            ): (
+                                'Log In'
+                            )}
+                
                         </button>
                     </form>
 
