@@ -60,7 +60,7 @@ CREATE TABLE `courses` (
   `description` text NOT NULL,
   `instructor_id` int(11) DEFAULT NULL,
   `thumbnail` text DEFAULT NULL,
-  `category` varchar(100) DEFAULT NULL,
+  `course_code`text NOT NULL,
   `difficulty_level` varchar(50) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
