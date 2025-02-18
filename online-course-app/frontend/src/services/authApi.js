@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost/your-api/api/auth';
+const API_URL = 'http://localhost/backend/api/auth';
 
 const authApi = {
     login: async (credentials) => {
